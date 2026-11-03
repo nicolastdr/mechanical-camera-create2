@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 public class PhotoItem extends Item {
     public PhotoItem(Properties properties) { super(properties); }
@@ -16,7 +16,7 @@ public class PhotoItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide) {
             ItemStack copy = stack.copy();
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PhotoScreen.open(copy));
+            if (FMLEnvironment.dist == Dist.CLIENT) PhotoScreen.open(copy);
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }

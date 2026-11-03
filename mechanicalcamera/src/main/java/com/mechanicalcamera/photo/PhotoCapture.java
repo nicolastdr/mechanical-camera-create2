@@ -3,7 +3,7 @@ import com.mechanicalcamera.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.DataComponents;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ClipContext;
@@ -14,6 +14,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 public final class PhotoCapture {
     public static final int WIDTH = 96, HEIGHT = 64;
@@ -32,7 +33,7 @@ public final class PhotoCapture {
                 double vx = ((x + 0.5) / WIDTH - 0.5) * 2.0 * HALF_FOV_TAN;
                 Vec3 ray = forward.add(right.scale(vx)).add(0, vy, 0).normalize();
                 BlockHitResult hit = level.clip(new ClipContext(origin, origin.add(ray.scale(RANGE)),
-                        ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, null));
+                        ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, CollisionContext.empty()));
                 pixels[y * WIDTH + x] = hit.getType() == HitResult.Type.BLOCK
                         ? blockColor(level, hit) : skyColor(y);
             }
