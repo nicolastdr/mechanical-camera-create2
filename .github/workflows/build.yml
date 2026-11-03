@@ -1,31 +1,63 @@
 name: Build Mechanical Camera
+
 on:
   push:
     branches: [main]
+    paths:
+      - 'mechanicalcamera/**'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
+
+# Keep only the newest build for this branch. New commits cancel older runs.
+concurrency:
+  group: mechanical-camera-build-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+
 jobs:
   build:
+    name: Compile mod (Minecraft 1.21.1 / NeoForge)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
+          cache-dependency-path: mechanicalcamera/**/*.gradle*
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10'
+
+      - name: Verify Java and Gradle
+        working-directory: mechanicalcamera
+        run: |
+          java -version
+          gradle --version
+
       - name: Build mod
         working-directory: mechanicalcamera
-        run: gradle --no-daemon build
+        run: |
+          # Retry once for temporary Maven/network failures; never disable TLS checks.
+          gradle --no-daemon --stacktrace build || {
+            echo "First build attempt failed; retrying once after a short pause."
+            sleep 20
+            gradle --no-daemon --stacktrace build
+          }
+
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
           name: mechanical-camera-jar
           path: mechanicalcamera/build/libs/*.jar
           if-no-files-found: error
+          retention-days: 14
