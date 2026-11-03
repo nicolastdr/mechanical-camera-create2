@@ -1,4 +1,5 @@
 package com.mechanicalcamera.block;
+import com.mojang.serialization.MapCodec;
 import com.mechanicalcamera.blockentity.MechanicalCameraBlockEntity;
 import com.mechanicalcamera.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -23,7 +24,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class MechanicalCameraBlock extends BaseEntityBlock {
+    public static final MapCodec<MechanicalCameraBlock> CODEC = simpleCodec(MechanicalCameraBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    @Override public MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
     public MechanicalCameraBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
