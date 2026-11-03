@@ -42,6 +42,8 @@ public final class MechanicalCameraMod {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> BlockStressValues.IMPACTS.put(ModBlocks.MECHANICAL_CAMERA.get(), 4.0));
+        event.enqueueWork(() ->
+                BlockStressValues.IMPACTS.register(ModBlocks.MECHANICAL_CAMERA.get(), () -> 4.0)
+        );
     }
 }
