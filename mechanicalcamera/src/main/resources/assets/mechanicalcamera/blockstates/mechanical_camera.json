@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "mechanicalcamera:block/mechanical_camera"},
+    "facing=south": {"model": "mechanicalcamera:block/mechanical_camera", "y": 180},
+    "facing=west": {"model": "mechanicalcamera:block/mechanical_camera", "y": 270},
+    "facing=east": {"model": "mechanicalcamera:block/mechanical_camera", "y": 90}
+  }
+}
