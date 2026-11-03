@@ -1,5 +1,6 @@
 package com.mechanicalcamera.blockentity;
 
+import com.mechanicalcamera.registry.ModBlockEntities;
 import com.mechanicalcamera.registry.ModItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -31,8 +32,8 @@ public class MechanicalCameraBlockEntity extends KineticBlockEntity {
         }
     };
 
-    public MechanicalCameraBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state);
+    public MechanicalCameraBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.MECHANICAL_CAMERA.get(), pos, state);
     }
 
     public IItemHandler getPaperHandler() { return paperHandler; }
@@ -75,15 +76,15 @@ public class MechanicalCameraBlockEntity extends KineticBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         tag.put("PaperInventory", paperHandler.serializeNBT(registries));
         tag.putBoolean("WasPowered", wasPowered);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         if (tag.contains("PaperInventory")) paperHandler.deserializeNBT(registries, tag.getCompound("PaperInventory"));
         wasPowered = tag.getBoolean("WasPowered");
     }
