@@ -1,6 +1,7 @@
 package com.mechanicalcamera.blockentity;
+import com.mechanicalcamera.block.MechanicalCameraBlock;
+import com.mechanicalcamera.photo.PhotoCapture;
 import com.mechanicalcamera.registry.ModBlockEntities;
-import com.mechanicalcamera.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -32,14 +33,16 @@ public class MechanicalCameraBlockEntity extends BlockEntity {
     public ItemStack insertPaper(ItemStack stack) { return paperHandler.insertItem(0, stack, false); }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MechanicalCameraBlockEntity camera) {
-        boolean poweredNow = camera.hasHorizontalRedstoneSignal();
-        boolean risingEdge = poweredNow && !camera.wasPowered;
-        camera.wasPowered = poweredNow;
+        boolean powered = camera.hasHorizontalRedstoneSignal();
+        boolean risingEdge = powered && !camera.wasPowered;
+        camera.wasPowered = powered;
         if (!risingEdge || camera.paperHandler.getStackInSlot(0).isEmpty()) return;
+        Direction facing = state.getValue(MechanicalCameraBlock.FACING);
+        ItemStack photo = PhotoCapture.capture(level, pos, facing);
         ItemStack paper = camera.paperHandler.getStackInSlot(0).copy();
         paper.shrink(1);
         camera.paperHandler.setStackInSlot(0, paper);
-        camera.ejectPhoto();
+        camera.ejectPhoto(photo);
         camera.setChanged();
     }
     private boolean hasHorizontalRedstoneSignal() {
@@ -50,14 +53,11 @@ public class MechanicalCameraBlockEntity extends BlockEntity {
         }
         return false;
     }
-    private void ejectPhoto() {
-        if (level == null) return;
-        ItemStack photo = new ItemStack(ModItems.PHOTO.get());
+    private void ejectPhoto(ItemStack photo) {
+        if (level == null || photo.isEmpty()) return;
         IItemHandler below = level.getCapability(Capabilities.ItemHandler.BLOCK, worldPosition.below(), Direction.UP);
-        if (below != null) {
-            for (int slot = 0; slot < below.getSlots() && !photo.isEmpty(); slot++)
-                photo = below.insertItem(slot, photo, false);
-        }
+        if (below != null) for (int slot = 0; slot < below.getSlots() && !photo.isEmpty(); slot++)
+            photo = below.insertItem(slot, photo, false);
         if (!photo.isEmpty()) Block.popResource(level, worldPosition.above(), photo);
     }
     @Override

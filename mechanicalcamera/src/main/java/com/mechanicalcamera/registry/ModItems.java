@@ -1,6 +1,6 @@
 package com.mechanicalcamera.registry;
-
 import com.mechanicalcamera.MechanicalCameraMod;
+import com.mechanicalcamera.item.PhotoItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -11,8 +11,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> MECHANICAL_CAMERA = ITEMS.register(
             "mechanical_camera", () -> new BlockItem(ModBlocks.MECHANICAL_CAMERA.get(), new Item.Properties())
     );
-    public static final DeferredItem<Item> PHOTO = ITEMS.register(
-            "photo", () -> new Item(new Item.Properties().stacksTo(64))
+    public static final DeferredItem<PhotoItem> PHOTO = ITEMS.register(
+            "photo", () -> new PhotoItem(new Item.Properties().stacksTo(1))
     );
     private ModItems() {}
 }

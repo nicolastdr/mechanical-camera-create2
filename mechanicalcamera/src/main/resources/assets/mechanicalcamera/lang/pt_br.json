@@ -1,5 +1,8 @@
 {
   "block.mechanicalcamera.mechanical_camera": "Câmera Mecânica",
   "item.mechanicalcamera.mechanical_camera": "Câmera Mecânica",
-  "item.mechanicalcamera.photo": "Fotografia"
+  "item.mechanicalcamera.photo": "Fotografia",
+  "screen.mechanicalcamera.photo": "Fotografia",
+  "screen.mechanicalcamera.invalid": "Esta fotografia não contém uma imagem válida.",
+  "screen.mechanicalcamera.close": "Pressione ESC para fechar"
 }
